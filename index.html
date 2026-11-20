@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Toi et Moi — вселенная стихов · Торгашев Артём</title>
+<meta name="description" content="Toi et Moi — сборник стихов на французском и русском языках. Путешествие по 3D-пространству от первого стиха к последнему: свечи, перья, звёзды. Ереван 2025.">
+<!-- После публикации на GitHub впишите адрес сайта в content — его будет предлагать кнопка «Поделиться» -->
+<meta property="og:url" content="https://torgart-dacx.github.io/toi-et-moi/">
+<meta property="og:title" content="Toi et Moi — вселенная стихов">
+<meta property="og:description" content="Сборник стихов на французском и русском языках. Путешествие от влюблённости до вечности.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Toi et Moi">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:image" content="https://torgart-dacx.github.io/toi-et-moi/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Обложка сборника «Toi et Moi» среди звёзд и свечей">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0a0618">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%230a0618'/%3E%3Ccircle cx='32' cy='32' r='9' fill='%23ffd166'/%3E%3Ccircle cx='32' cy='32' r='18' fill='none' stroke='%23ff5fd2' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="css/fonts.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="gl" aria-hidden="true"></div>
+<div id="css"></div>
+<div id="labels"></div>
+<canvas id="trail" aria-hidden="true"></canvas>
+
+<header class="hud hud-top">
+  <button id="btn-home" class="brand" title="К первому стиху"><img src="img/title.svg" alt="Toi et Moi"></button>
+  <div class="hud-right">
+    <button id="btn-sound" class="pill" aria-pressed="false" title="Звук">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path class="wave" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"/></svg>
+      <span class="lbl">Без звука</span>
+    </button>
+    <button id="btn-fs" class="pill" title="Полный экран (F)" aria-label="Полный экран">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+    </button>
+    <button id="btn-toc" class="pill" title="Оглавление и поиск (/)">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+      <span class="lbl">Оглавление</span>
+    </button>
+  </div>
+</header>
+
+<nav class="hud hud-bottom" id="nav" aria-label="Навигация по стихам">
+  <button id="prev" class="round" aria-label="Предыдущий стих">←</button>
+  <div class="now">
+    <span class="dot"></span>
+    <span id="now-gal"></span>
+    <span id="now-title"></span>
+    <span id="now-count"></span>
+  </div>
+  <button id="next" class="round" aria-label="Следующий стих">→</button>
+  <button id="btn-lang" class="pill small" hidden>Перевод →</button>
+  <button id="btn-map" class="pill small" title="Карта пути (Esc)">Карта</button>
+</nav>
+
+<div id="more" aria-hidden="true">⌄</div>
+<div id="map-panel" aria-live="polite">
+  <div class="mp-t">Весь путь «Toi et Moi»</div>
+  <p class="mp-s">Стихи лежат на вихре, закрученном вверх: от влюблённости внизу до вечности наверху.</p>
+  <p class="mp-i" id="mp-info"></p>
+  <div class="mp-b">
+    <button id="mp-start" class="pill mp-main">Начать с начала</button>
+    <button id="mp-back" class="pill" hidden>Вернуться к стиху</button>
+  </div>
+</div>
+<div id="hint" class="hint">Колесо или свайп — читать дальше и листать · ← → — стихи · F — полный экран · «Карта» — весь вихрь</div>
+
+<aside id="toc" aria-hidden="true" aria-label="Оглавление">
+  <div class="toc-head">
+    <div>
+      <div class="toc-title"><img src="img/title.svg" alt="Toi et Moi"></div>
+      <div class="toc-sub">5 глав · 21 стих · послесловие</div>
+    </div>
+    <button id="toc-close" class="round" aria-label="Закрыть">×</button>
+  </div>
+  <input id="toc-search" type="search" placeholder="Найти строку: «весна», «rivière»…" autocomplete="off">
+  <div id="toc-list"></div>
+  <p id="toc-empty" hidden>Такой строки нет во вселенной. Попробуйте другое слово.</p>
+</aside>
+
+<section id="cover">
+  <div class="silhouettes" aria-hidden="true">
+    <img src="img/ink-roses_small.webp" alt="" style="left:6%;top:8%;width:15vmin;--r:-8deg">
+    <img src="img/ink-boat.webp" alt="" style="right:5%;top:10%;width:20vmin;--r:6deg;--dx:-14px;animation-duration:26s">
+    <img src="img/sketch-sevan.webp" alt="" style="left:3%;bottom:16%;width:21vmin;--r:4deg;--dy:16px;animation-duration:30s">
+    <img src="img/ink-rose.webp" alt="" style="right:9%;bottom:8%;width:16vmin;--r:-10deg;animation-duration:24s">
+    <img src="img/ink-wave.webp" alt="" style="left:34%;bottom:2%;width:19vmin;--r:-3deg;--dx:-10px;animation-duration:28s">
+    <img src="img/sketch-echo.webp" alt="" style="left:38%;top:2%;width:14vmin;--r:5deg;--dy:14px;animation-duration:32s">
+    <img src="img/ink-swords.webp" alt="" style="right:27%;top:36%;width:10vmin;--r:12deg;opacity:.1;animation-duration:20s">
+    <img src="img/sketch-je-veux.webp" alt="" style="left:20%;top:40%;width:11vmin;--r:-6deg;opacity:.1;animation-duration:34s">
+  </div>
+  <div class="cover-inner">
+    <h1 class="cover-title"><img src="img/title.svg" alt="Toi et Moi"></h1>
+    <p class="cover-author">Artem Torgashev</p>
+    <div class="cover-btns">
+      <button id="enter-sound" class="enter">Начать</button>
+      <button id="enter-quiet" class="enter ghost">без звука</button>
+    </div>
+    <div class="loading">зажигаю свечи…</div>
+  </div>
+</section>
+
+<section id="finale" aria-hidden="true">
+  <div class="fin-candles" aria-hidden="true">
+    <i class="candle" style="left:9%;--h:96px;--d:0s"></i><i class="candle" style="left:15%;--h:64px;--d:-1.3s"></i>
+    <i class="candle" style="right:11%;--h:84px;--d:-.6s"></i><i class="candle" style="right:18%;--h:58px;--d:-2.1s"></i>
+  </div>
+  <img class="fin-rose r1" src="img/ink-rose.webp" alt="" aria-hidden="true">
+  <img class="fin-rose r2" src="img/ink-rose.webp" alt="" aria-hidden="true">
+  <img class="fin-rose r3" src="img/ink-roses_small.webp" alt="" aria-hidden="true">
+  <div class="fin-inner">
+    <p id="fin-fr" class="fin-verse fr" lang="fr"></p>
+    <div class="fin-center">
+      <img class="fin-cover" src="img/cover.webp" alt="Обложка сборника «Toi et Moi», Artem Torgashev">
+      <img class="fin-small-rose" src="img/ink-roses_small.webp" alt="">
+      <div class="fin-actions">
+        <button id="like" class="pill" aria-pressed="false"><span class="hrt" aria-hidden="true">♥</span><span class="lbl">Нравится</span></button>
+        <button id="share" class="pill"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg><span class="lbl">Поделиться</span></button>
+        <button id="restart" class="pill">Начать заново</button>
+      </div>
+      <div id="share-menu" hidden>
+        <a data-net="tg" target="_blank" rel="noopener">Telegram</a>
+        <a data-net="vk" target="_blank" rel="noopener">ВКонтакте</a>
+        <a data-net="wa" target="_blank" rel="noopener">WhatsApp</a>
+        <button data-net="copy" type="button">Скопировать ссылку</button>
+      </div>
+    </div>
+    <p id="fin-ru" class="fin-verse ru" lang="ru"></p>
+  </div>
+</section>
+
+<div id="toast" role="status" aria-live="polite"></div>
+<noscript><div class="noscript">Для путешествия по вселенной стихов нужен JavaScript и WebGL.</div></noscript>
+<script src="app.js"></script>
+</body>
+</html>

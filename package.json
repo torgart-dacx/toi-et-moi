@@ -1,0 +1,12 @@
+{
+  "name": "toi-et-moi",
+  "private": true,
+  "description": "Toi et Moi — 3D-вселенная стихов",
+  "scripts": {
+    "build": "esbuild js/main.js --bundle --minify --format=iife --target=es2020 --loader:.webp=dataurl --outfile=app.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.24.0",
+    "three": "0.170.0"
+  }
+}
