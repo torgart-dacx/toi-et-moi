@@ -280,14 +280,13 @@ const WAX = canvasTex(64, 256, (g, w, h) => {
 });
 
 // ───────────── Ветер с порывами ─────────────
-const wind = new Vector3(), _bw = new Vector3(); let gust = 0;
+const wind = new Vector3(); let gust = 0;
 function updateWind(T) {
   // спокойный фон + редкие мягкие порывы (сумма медленных волн, обрезанная снизу)
   const g1 = Math.max(0, Math.sin(T * 0.21) * Math.sin(T * 0.13 + 1.7)), g2 = Math.max(0, Math.sin(T * 0.37 + 0.4)) ** 3;
   gust = Math.min(1, g1 * 1.4 + g2 * 0.8);
   const a = T * 0.05 + Math.sin(T * 0.11) * 1.2;
   wind.set(Math.cos(a), 0.25 * Math.sin(T * 0.3), Math.sin(a)).multiplyScalar(18 + gust * 150);
-  if (fx.blow > 0.02) { camera.getWorldDirection(_bw); wind.addScaledVector(_bw, fx.blow * 420).y += fx.blow * 60; }   // дыхание зрителя уносит перья и пух
 }
 
 // ───────────── Перья и лепестки (плоскости, кружатся) ─────────────
@@ -864,7 +863,7 @@ function frame() {
     s.mark.scale.setScalar(420 * Math.max(1, md / 5500));
     // на карте по огонькам бежит волна света вверх по вихрю
     const wave = 1 + ovK * 0.9 * Math.max(0, Math.sin(T * 2.2 - s.si * 0.45));
-    s.mark.material.opacity = Math.min(1, (show ? 0.22 : mode === 'overview' ? 0.6 : 0.45) * (0.8 + 0.2 * Math.sin(T * 1.3 + s.seed)) * wave * (s.markK ?? 1)) * fadeAll;
+    s.mark.material.opacity = Math.min(1, (show ? 0.22 : mode === 'overview' ? 0.6 : 0.45) * (0.8 + 0.2 * Math.sin(T * 1.3 + s.seed)) * wave) * fadeAll;
   }
   for (const k of sketches) { k.spr.material.opacity = k.base * (0.8 + 0.2 * Math.sin(T * 0.6 + k.ph)) * fadeAll; k.spr.material.rotation = Math.sin(T * 0.15 + k.ph) * 0.06; }
   for (const c of chapterCards) {
@@ -899,11 +898,9 @@ function frame() {
   }
   fluff.geometry.attributes.position.needsUpdate = true;
   for (const c of candles) {
-    const b = fx.blow, lit = c.lit ?? 1;
-    const fl = 1 + Math.sin(T * 9 + c.ph) * 0.05 + Math.sin(T * 21 + c.ph * 3) * 0.04 + gust * 0.06 * Math.sin(T * 30 + c.ph) + b * 0.35 * Math.sin(T * 37 + c.ph * 5);
-    const sq = 1 - b * 0.35;   // от выдоха пламя пригибается и дрожит
-    c.flame.scale.set(18 * (2 - fl) * (1 + b * 0.3) * (0.4 + 0.6 * lit), 38 * fl * sq * lit, 1); c.flame.material.rotation = Math.sin(T * 2.5 + c.ph) * 0.05 + wind.x * 0.0012 + b * 0.7 * Math.sin(T * 6 + c.ph);
-    c.halo.material.opacity = (0.12 + (fl - 1) * 0.6) * fadeAll * lit; c.flame.material.opacity = 0.8 * fadeAll * Math.min(1, lit * 1.4); c.g.position.y = c.y0 + Math.sin(T * 0.5 + c.ph) * 12 * motion;
+    const fl = 1 + Math.sin(T * 9 + c.ph) * 0.05 + Math.sin(T * 21 + c.ph * 3) * 0.04 + gust * 0.06 * Math.sin(T * 30 + c.ph);
+    c.flame.scale.set(18 * (2 - fl), 38 * fl, 1); c.flame.material.rotation = Math.sin(T * 2.5 + c.ph) * 0.05 + wind.x * 0.0012;
+    c.halo.material.opacity = (0.12 + (fl - 1) * 0.6) * fadeAll; c.flame.material.opacity = 0.8 * fadeAll; c.g.position.y = c.y0 + Math.sin(T * 0.5 + c.ph) * 12 * motion;
     c.g.visible = camera.position.distanceTo(c.g.position) > 420;
   }
   for (const f of floaters) {
@@ -974,8 +971,8 @@ function enter(withSound) {
 }
 let poemHintShown = false;
 $('#hint').textContent = isTouch
-  ? 'Свайп — листать · двойное касание по слову — отпустить его в небо · долгое нажатие на строку — открытка'
-  : 'Колесо — читать и листать · двойной клик по слову — отпустить его в небо · ✉ у строки — открытка · «Карта» — весь вихрь';
+  ? 'Свайп — листать · нажмите на фото, чтобы оно ожило · «Карта» — весь вихрь'
+  : 'Колесо — читать и листать · ← → — стихи · клик по фото — оживает · F — полный экран · «Карта» — весь вихрь';
 $('#mp-info').textContent = isTouch
   ? 'По всему полю можно свободно перемещаться: один палец — вращать вихрь, два пальца — приблизить и сдвинуть, нажмите на огонёк — откроется стих.'
   : 'По всему полю можно свободно перемещаться: колесо — лететь к точке под курсором, перетаскивание — вращать, правая кнопка — сдвиг, W A S D и Q/E — полёт. Клик по огоньку открывает стих.';
