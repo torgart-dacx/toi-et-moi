@@ -49,7 +49,7 @@ export class Ambient {
     // тёплый тон: приглушаем верх
     const shelf = ctx.createBiquadFilter(); shelf.type = 'highshelf'; shelf.frequency.value = 4200; shelf.gain.value = -8;
     const top = ctx.createBiquadFilter(); top.type = 'lowpass'; top.frequency.value = 9000; top.Q.value = 0.5; this.top = top;
-    this.vol = ctx.createGain(); this.master.connect(this.vol).connect(shelf).connect(top).connect(comp).connect(ctx.destination);
+    this.vol = ctx.createGain(); this.duckG = ctx.createGain(); this.master.connect(this.duckG).connect(this.vol).connect(shelf).connect(top).connect(comp).connect(ctx.destination);
     this.bus = ctx.createGain(); this.bus.gain.value = 0.8;
     const dry = ctx.createGain(); dry.gain.value = 0.5; this.bus.connect(dry).connect(this.master);
     // зал: предзадержка + длинный импульс с «затухающими» верхами
@@ -323,6 +323,18 @@ export class Ambient {
     s.buffer = buf; s.playbackRate.value = rate; g.gain.value = v;
     if (p) { p.pan.value = (Math.random() - 0.5) * 1.2; s.connect(g).connect(p).connect(this.bus); } else s.connect(g).connect(this.bus);
     s.start(t + 0.01);
+  }
+  // музыка уступает место голосу
+  duck(on) { if (this.ctx) this.duckG.gain.setTargetAtTime(on ? 0.32 : 1, this.ctx.currentTime, on ? 0.25 : 0.9); }
+  // свеча гаснет: короткий выдох; загорается: мягкий «вспых»
+  puff(v = 1) { this._burst(0.35, 900, 0.09 * v, 0.004); }
+  light(v = 1) { this._burst(0.5, 2200, 0.05 * v, 0.06); }
+  _burst(dur, f, v, att) {
+    if (!this.ctx || !this.on) return;
+    const t = this.ctx.currentTime + 0.01, s = this.ctx.createBufferSource(), fl = this.ctx.createBiquadFilter(), g = this.ctx.createGain();
+    s.buffer = this.noise; fl.type = 'lowpass'; fl.frequency.setValueAtTime(f, t); fl.frequency.exponentialRampToValueAtTime(f * 0.3, t + dur);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(v, t + att + 0.005); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    s.connect(fl).connect(g).connect(this.bus); s.start(t, Math.random() * 2); s.stop(t + dur + 0.05);
   }
   pageTurn() { if (this.turnBufs) this._play(this.turnBufs[(Math.random() * 3) | 0], 0.11, 0.9 + Math.random() * 0.2); }
   crumple(v = 1) { if (this.crumpleBufs) this._play(this.crumpleBufs[(Math.random() * 3) | 0], 0.09 * v, 0.85 + Math.random() * 0.3); }

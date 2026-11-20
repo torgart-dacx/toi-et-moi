@@ -38,6 +38,14 @@
       <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path class="wave" d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12"/></svg>
       <span class="lbl">Без звука</span>
     </button>
+    <button id="btn-walk" class="pill" title="Прогулка: стихи сами сменяют друг друга">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path class="play" d="M8 5l11 7-11 7z"/><path class="pause" d="M8 5v14M16 5v14"/></svg>
+      <span class="lbl">Прогулка</span>
+    </button>
+    <button id="btn-candle" class="pill" aria-pressed="false" title="Подуйте в микрофон — свечи услышат">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c2 2.6 3 4.3 3 5.8A3 3 0 0 1 12 12a3 3 0 0 1-3-3.2C9 7.3 10 5.6 12 3z"/><path d="M9.5 14h5v7h-5z"/></svg>
+      <span class="lbl">Подуть</span>
+    </button>
     <button id="btn-fs" class="pill" title="Полный экран (F)" aria-label="Полный экран">
       <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
     </button>
@@ -57,6 +65,8 @@
     <span id="now-count"></span>
   </div>
   <button id="next" class="round" aria-label="Следующий стих">→</button>
+  <button id="btn-rose" class="pill small" aria-pressed="false" title="Оставить розу на любимом стихе" hidden><img src="img/ink-roses_small.webp" alt="" width="20" height="24"><span class="lbl">Роза</span></button>
+  <button id="btn-voice" class="pill small" title="Слушать голос автора" hidden><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3z"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg><span class="lbl">Слушать</span></button>
   <button id="btn-lang" class="pill small" hidden>Перевод →</button>
   <button id="btn-map" class="pill small" title="Карта пути (Esc)">Карта</button>
 </nav>
@@ -68,8 +78,50 @@
   <p class="mp-i" id="mp-info"></p>
   <div class="mp-b">
     <button id="mp-start" class="pill mp-main">Начать с начала</button>
+    <button id="mp-walk" class="pill">▶ Прогулка</button>
     <button id="mp-back" class="pill" hidden>Вернуться к стиху</button>
   </div>
+  <div class="mp-motifs">
+    <div class="mp-l">Созвездие мотивов</div>
+    <div class="chips" id="mp-chips"></div>
+    <p class="mp-m" id="mp-mtxt">Выберите образ — нити свяжут стихи, где он звучит.</p>
+  </div>
+</div>
+<div id="walk-bar" hidden><span class="wb-l">Прогулка</span><span class="wb-t" id="wb-t"></span><span class="wb-p"><i id="wb-p"></i></span><button id="wb-stop" title="Остановить прогулку">❚❚</button></div>
+<div id="flyers" aria-hidden="true"></div>
+<div id="words-tray" hidden><span class="wt-l">Ваша строка</span><span id="wt-words"></span><button id="wt-card" class="pill small">✉ Открытка</button><button id="wt-clear" title="Очистить">×</button></div>
+<button id="pc-line" hidden title="Открытка из этой строки">✉</button>
+<div id="photo-box" hidden>
+  <div class="pb-stage"><div class="pb-glow"></div><img class="pb-photo" alt=""><img class="pb-sketch" alt=""><div class="pb-dust"></div></div>
+  <div class="pb-cap"><h4></h4><p class="fr" lang="fr"></p><p class="ru"></p></div>
+  <button class="pb-close" aria-label="Закрыть">×</button>
+</div>
+<div id="pc-modal" hidden>
+  <div class="pc-box">
+    <div class="pc-view"><canvas id="pc-canvas"></canvas></div>
+    <div class="pc-side">
+      <div class="pc-t">Открытка</div>
+      <div class="pc-lbl">Стиль</div>
+      <div class="pc-row" id="pc-styles"><button data-v="parch" class="on">Пергамент</button><button data-v="night">Ночь</button><button data-v="rose">Роза</button></div>
+      <div class="pc-lbl">Формат</div>
+      <div class="pc-row" id="pc-formats"><button data-v="card" class="on">Открытка</button><button data-v="story">Сторис</button></div>
+      <div class="pc-lbl" id="pc-lines-l">Строки</div>
+      <div class="pc-row" id="pc-lines"><button data-v="up">＋ выше</button><button data-v="down">＋ ниже</button><button data-v="one">одна</button></div>
+      <label class="pc-chk" id="pc-tr-l"><input type="checkbox" id="pc-tr" checked> с переводом</label>
+      <div class="pc-act"><button id="pc-dl" class="pill mp-main">Скачать</button><button id="pc-share" class="pill">Поделиться</button></div>
+    </div>
+    <button class="pc-close" aria-label="Закрыть">×</button>
+  </div>
+</div>
+<div id="studio" hidden>
+  <div class="st-h">Студия голоса <button id="st-close" title="Закрыть">×</button></div>
+  <div class="st-poem" id="st-poem"></div>
+  <div class="st-row" id="st-lang"></div>
+  <div class="st-meter"><i id="st-level"></i></div>
+  <div class="st-row"><button id="st-rec" class="pill mp-main">● Записать</button><button id="st-play" class="pill" disabled>▶ С обработкой</button><button id="st-raw" class="pill" disabled>▶ Как есть</button></div>
+  <div class="st-row"><button id="st-save" class="pill" disabled>⬇ Сохранить файл</button><span id="st-time"></span></div>
+  <p class="st-tip">Читайте в 20–30 см от микрофона, в тихой комнате. Сохранённый файл положите в папку <b>voice/</b> сайта — или пришлите мне, я обработаю звук.</p>
+  <div class="st-done" id="st-done"></div>
 </div>
 <div id="hint" class="hint">Колесо или свайп — читать дальше и листать · ← → — стихи · F — полный экран · «Карта» — весь вихрь</div>
 
