@@ -48,11 +48,13 @@ Telegram запоминает карточку: если ссылку уже о�
 
 | Глава | Стихи (id) |
 |---|---|
-| I. Coup de foudre | `fleur`, `coup-de-coeur`, `dejavu`, `je-veux`, `ne-zabudu`, `stupenki`, `sevan` |
-| II. Au bord de la rivière | `bisou`, `echo`, `au-bord`, `si-tu-maimes`, `le-ciel` |
-| III. Шипы и розы | `skala`, `shipy`, `mechi`, `proshchanie` |
-| IV. L’Espoir | `ogon`, `karnaval`, `espoir`, `avouer` |
-| V. L’amour éternel | `lamour`, `posleslovie`, `posvyashchenie` |
+| I. Coup de foudre — влюблённость | `fleur`, `coup-de-coeur`, `dejavu`, `je-veux`, `ne-zabudu` |
+| II. Au bord de la rivière — память и разлука | `bisou`, `skala`, `stupenki`, `echo`, `au-bord`, `si-tu-maimes` |
+| III. Le ciel — огонь и небо | `ogon`, `le-ciel`, `karnaval` |
+| IV. Шипы и розы — буря, надежда и прощание | `shipy`, `mechi`, `espoir`, `proshchanie` |
+| V. L’amour éternel — признание и вечность | `avouer`, `sevan`, `lamour`, `posleslovie`, `posvyashchenie` |
+
+Стихи идут в том же порядке, что и в книге.
 
 
 ## Управление

@@ -26,7 +26,8 @@ export const AFTERWORD = {
 
 const TR = 'В литературном переводе.';
 
-export const GALAXIES = [
+// исходные тексты по темам; порядок пути — как в книге (ниже)
+const SRC = [
   {
     id: 'coup',
     name: 'Coup de foudre',
@@ -544,4 +545,14 @@ export const GALAXIES = [
 ];
 
 // Плоский список в порядке путешествия
+// Главы идут подряд в порядке сборника (Ереван, 2025)
+const BYID = Object.fromEntries(SRC.flatMap((g) => g.poems.map((p) => [p.id, p])));
+const META = Object.fromEntries(SRC.map((g) => [g.id, g]));
+export const GALAXIES = [
+  { ...META.coup, name: 'Coup de foudre', sub: 'влюблённость', poems: ['fleur', 'coup-de-coeur', 'dejavu', 'je-veux', 'ne-zabudu'] },
+  { ...META.riviere, name: 'Au bord de la rivière', sub: 'память и разлука', poems: ['bisou', 'skala', 'stupenki', 'echo', 'au-bord', 'si-tu-maimes'] },
+  { ...META.espoir, name: 'Le ciel', sub: 'огонь и небо', poems: ['ogon', 'le-ciel', 'karnaval'] },
+  { ...META.epines, name: 'Шипы и розы', sub: 'буря, надежда и прощание', poems: ['shipy', 'mechi', 'espoir', 'proshchanie'] },
+  { ...META.eternel, name: 'L’amour éternel', sub: 'признание и вечность', poems: ['avouer', 'sevan', 'lamour'] },
+].map((g) => ({ ...g, poems: g.poems.map((id) => BYID[id]) }));
 export const ORDER = GALAXIES.flatMap((g, gi) => g.poems.map((p, pi) => ({ ...p, gi, pi, galaxy: g })));
